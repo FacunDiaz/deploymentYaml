@@ -47,5 +47,13 @@ kubectl get ns
 
 Antes de aplicar los manifiestos de forma secuencial, es necesario montar un volumen persistente que tendra almacenados los archivos de nuestra página web estática. Esto lo conseguimos ejecutando el siguiente comando 
 minikube mount <ruta a la carpeta con el contenido estático>:/mnt/data/web-content
+Una vez montado nos debería aparecer un mensaje de que la operación fue exitosa, debemos mantener esa terminal abierta para que el proceso siga funcionando. 
+
+Una vez hecho esto es hora de aplicar los manifiestos yaml en nuestro cluster. Esto lo conseguiremos posicionandos en la carpeta manifiestos y ejecutando los siguientes comandos en la terminal de forma secuencial: 
+kubectl apply -f namespace.yaml
+kubectl apply -f pvc/pv.yaml
+kubectl apply -f pvc/pvc.yaml
+kubectl apply -f deployment/nginx-deployment.yaml
+kubectl apply -f service/ngix-service.yaml
 
 
