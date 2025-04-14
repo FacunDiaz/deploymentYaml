@@ -22,11 +22,15 @@ Descripción de procesos:
 En primero lugar, debemos crear un directorio en el cual vamos a almacenar dos herramientas esenciales: 
 -Manifiestos YAML de despliegue 
 -Contenido estático de la página web
-Para ello se debe ejecutar el siguiente comando: 
-mkdir Webpage
+Para ello se debe ejecutar el siguiente comando compleandolo con el nombre del directorio: 
+mkdir <nombre-del-directorio> 
 
-Y dentro de la carpeta vamos a hacer un git clone de este repositorio para tener una copia local. Lo que va a generar un carpeta donde están todos los manifiestos yaml. 
-Y también dentro de la carpeta webpage vamos a hacer un git clone del repositorio donde se encuentran los archivos de la página web estática. Para poder recibir y aplicar los cambios en el el repositorio remoto es importante que hayamos creado una conexión shh.
+Luego, para posicionarnos dentro de la carpeta vamos a ejecutar: 
+cd <nombre-del-directorio> 
+
+Y dentro de la carpeta vamos a hacer un git clone de este repositorio (deploymentYaml) para tener una copia local. Lo que va a generar un carpeta donde están hay un README y una carpeta llamada manifiestos que contiene todos los archvios de despliegue. 
+Y también dentro de la carpeta principal vamos a hacer un git clone del repositorio donde se encuentran los archivos de la página web estática. 
+Para poder recibir y aplicar los cambios en el el repositorio remoto es importante que hayamos creado una conexión shh con ambos repositorios.
 
 El directorio debería tener la siguiente estructura: 
 
