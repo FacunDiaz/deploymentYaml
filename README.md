@@ -92,7 +92,7 @@ kubectl apply -f namespace.yaml
 kubectl apply -f pvc/pv.yaml
 kubectl apply -f pvc/pvc.yaml
 kubectl apply -f deployment/nginx-deployment.yaml
-kubectl apply -f service/ngix-service.yaml
+kubectl apply -f service/nginx-service.yaml
 
 Cada uno de estos manifiestos realiza distintas acciones: 
     Crear el Namespace (namespace.yaml).
