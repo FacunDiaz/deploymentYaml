@@ -49,6 +49,8 @@ Antes de aplicar los manifiestos de forma secuencial, es necesario montar un vol
 minikube mount <ruta a la carpeta con el contenido estático>:/mnt/data/web-content
 Una vez montado nos debería aparecer un mensaje de que la operación fue exitosa, debemos mantener esa terminal abierta para que el proceso siga funcionando. 
 
+Gracias a ese montaje, el volumen persistente podrá obtener los datos de la página web estática y el contenedor nginx los va poder mostrar gracias a que esta asociado con ese pv. 
+
 Una vez hecho esto es hora de aplicar los manifiestos yaml en nuestro cluster. Esto lo conseguiremos posicionandos en la carpeta manifiestos y ejecutando los siguientes comandos en la terminal de forma secuencial: 
 kubectl apply -f namespace.yaml
 kubectl apply -f pvc/pv.yaml
