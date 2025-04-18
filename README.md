@@ -19,22 +19,26 @@ Para crear un cluster de Minikube deberá tener instaladas las siguientes herram
 
 Descripción de procesos: 
 
-En primero lugar, debemos crear un directorio en el cual vamos a almacenar dos herramientas esenciales: 
+Creación del Directorio de Trabajo: 
+
+En primero lugar, debemos crear un directorio que contendra los siguiente: 
 -Manifiestos YAML de despliegue 
 -Contenido estático de la página web
-Para ello se debe ejecutar el siguiente comando compleandolo con el nombre del directorio: 
-mkdir <nombre-del-directorio> 
+
+Para ello se debe ejecutar el siguiente comando: 
+mkdir minikube-static-web 
 
 Luego, para posicionarnos dentro de la carpeta vamos a ejecutar: 
-cd <nombre-del-directorio> 
+cd minikube-static-web 
 
-Y dentro de la carpeta vamos a hacer un git clone de este repositorio (deploymentYaml) para tener una copia local. Lo que va a generar un carpeta donde están hay un README y una carpeta llamada manifiestos que contiene todos los archvios de despliegue. 
-Y también dentro de la carpeta principal vamos a hacer un git clone del repositorio donde se encuentran los archivos de la página web estática. 
-Para poder recibir y aplicar los cambios en el el repositorio remoto es importante que hayamos creado una conexión shh con ambos repositorios.
+Una vez dentro de la carpeta vamos a hacer un git clone a los dos repositorios donde estan los manifiestos y el contenido estático. Para ello vamos a ejecutar los siguientes comandos dentro la carpeta minikube-static-web:
+https://github.com/<nombre_usuario>/deploymentYaml.git
+https://github.com/<nombre_usuario>/static-website.git
+Nota: Asegurate de haber configurado correctamente tu conexión SSH con GitHub para poder clonar ambos repositorios. Deberás completar el comando git clone con el nombre de usuario que este asociado con tu cuenta. 
 
 El directorio debería tener la siguiente estructura: 
 
-mi-proyecto-k8s/                  # Carpeta raíz del proyecto
+minikube-static-web/                  # Carpeta raíz del proyecto
 ├── deploymentYaml/               # Repositorio Git clonado con manifiestos y documentación
 │   ├── README.md                 # Manual o guía de despliegue
 │   └── manifiestos/              # Manifiestos YAML organizados
@@ -47,7 +51,7 @@ mi-proyecto-k8s/                  # Carpeta raíz del proyecto
 │       └── service/
 │           └── nginx-service.yaml
 │
-└── static-site/                  # Carpeta local con el contenido estático del sitio web
+└── static-website/                  # Carpeta local con el contenido estático del sitio web
     ├── index.html
     ├── estilos.css
     └── imagenes/
@@ -62,33 +66,15 @@ Done! kubectl is now configured to use "deploy-web-site" cluster and "default" n
 
 Una vez creado, para ubicarnos dentro de ese cluster con kubectl, usamos el siguiente comando: 
 minikube profile deploy-web-site
-Se debería mostrar: 
- minikube profile was successfully set to deploy-web-site
+Se debería mostrar: minikube profile was successfully set to deploy-web-site
 
 Para comprobar que estemos en el contexto correcto vamos a ejecutar el siguiente comando: 
 kubectl config current-context
-Se debería mostrar algo como: 
-minikube-deploy-web-site
+Se debería mostrar algo como: minikube-deploy-web-site
 
 Es necesario instalar un servidor de métricas para poder recopilar y supervisar los datos de rendimiento de las aplicaciones. Para hacerlo vamos a ejecutar el siguiente comando: 
 minikube addons enable metrics-server --profile=deploy-web-site
-Se debería obtener: 
-The 'metrics-server' addon is enabled
- 
-Y por último, vamos a crear un namespace con el nombre "web-site" donde desplegaremos todos nuestros manifiestos yaml. Los namespaces nos permiten organizar recursos en grupos lógicos, lo que facilita la gestión de aplicaciones y clusteres. Para crearlo, vamos a ejecutar el siguiente comando:
-kubectl create namespace web-site
-Se debería mostrar algo como el siguiente mensaje: 
-namespace/web-site created
-
-Para ver la lista de todos los namespace de nuestro cluster podemos usar el comando: 
-kubectl get ns 
-
-Antes de aplicar los manifiestos de forma secuencial, es necesario montar un volumen persistente que tendra almacenados los archivos de nuestra página web estática. Esto lo conseguimos ejecutando el siguiente comando 
-
-minikube mount <ruta a la carpeta con el contenido estático>:/mnt/data/web-content
-
-Este comando monta la carpeta de tu máquina local (en la ruta especificada) dentro del nodo de Minikube, en la ruta /mnt/data/web-content. Esto permite que los archivos estáticos de la página web estén disponibles para ser utilizados dentro del clúster de Kubernetes. Es importante mantener esta terminal abierta mientras el comando se esté ejecutando, ya que si cierras la terminal, se detendrá el montaje, y Kubernetes ya no podrá acceder a los archivos estáticos.
-Gracias a ese montaje, el volumen persistente podrá obtener los datos de la página web estática y el contenedor nginx los va poder mostrar gracias a que esta asociado con ese pv. 
+Se debería obtener: The 'metrics-server' addon is enabled
 
 
 Una vez hecho esto es hora de aplicar los manifiestos yaml en nuestro cluster. Esto lo conseguiremos posicionandos en la carpeta manifiestos y ejecutando los siguientes comandos en la terminal de forma secuencial: 
@@ -103,11 +89,22 @@ Cada uno de estos manifiestos realiza distintas acciones:
     Crear el Persistent Volume (pv.yaml) y el Persistent Volume Claim** (pvc.yaml).
     Desplegar el Deployment que contiene un pod con el contenedor NGINX para servir la página estática.
     Crear el Service (nginx-service.yaml) que expondrá el contenedor NGINX.
-
 El Deployment configurado en nginx-deployment.yaml tiene un contenedor que funciona como un servidor web NGINX, y el PersistentVolumeClaim (pvc.yaml) se vincula al contenedor para que este sirva los archivos estáticos.
 
-Una vez que aplicamos todos los manifiestos, ya podemos acceder al servido nginx a través del service que se encuentra en el cluster. 
+Antes de acceder a la web de forma local, es necesario montar un volumen persistente que tendra almacenados los archivos de nuestra página web estática. Esto lo conseguimos ejecutando el siguiente comando 
+minikube mount <ruta a la carpeta con el contenido estático>:/mnt/data/web-content
+
+Este comando monta la carpeta de tu máquina local (en la ruta especificada) dentro del nodo de Minikube, en la ruta /mnt/data/web-content. Esto permite que los archivos estáticos de la página web estén disponibles para ser utilizados dentro del clúster de Kubernetes. Es importante mantener esta terminal abierta mientras el comando se esté ejecutando, ya que si cierras la terminal, se detendrá el montaje, y Kubernetes ya no podrá acceder a los archivos estáticos.
+Gracias a ese montaje, el volumen persistente podrá obtener los datos de la página web estática y el contenedor nginx los va poder mostrar gracias a que esta asociado con ese pv. 
+
+Importante:
+Antes de acceder a la página web, es recomendable reiniciar el deployment para asegurarse de que el contenedor NGINX cargue correctamente los archivos estáticos desde el volumen persistente.
+Esto se debe a que el contenido montado con minikube mount puede no estar disponible inmediatamente cuando el contenedor se inicia por primera vez.
+Para reiniciar el deployment, ejecuta el siguiente comando:
+kubectl rollout restart deployment nginx-deployment -n web-site
+
+Una vez que aplicamos todos los manifiestos y montamos la carpeta con el contenido estático en el volumen persistente, ya podemos acceder al servido nginx a través del service que se encuentra en el cluster. 
 Para ello debemos ejecutar el siguiente comando para acceder al servidor mediante el service: 
 minikube service nginx -n web-site --url
 
-Este comando nos va a retornar una url local a la que podremos acceder. Una vez ingresemos a la url podremos la página web. 
+Este comando nos va a retornar una url local a la que podremos acceder. Una vez ingresemos a la url podremos ver la página web. 
