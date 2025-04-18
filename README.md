@@ -53,6 +53,7 @@ minikube-static-web/                  # Carpeta raíz del proyecto
 │
 └── static-website/                  # Carpeta local con el contenido estático del sitio web
     ├── index.html
+    ├── assets/
     ├── estilos.css
     └── imagenes/
         └── logo.png
@@ -77,7 +78,7 @@ minikube addons enable metrics-server --profile=deploy-web-site
 Se debería obtener: The 'metrics-server' addon is enabled
 
 
-Una vez hecho esto es hora de aplicar los manifiestos yaml en nuestro cluster. Esto lo conseguiremos posicionandos en la carpeta manifiestos y ejecutando los siguientes comandos en la terminal de forma secuencial: 
+Una vez hecho esto es hora de aplicar los manifiestos yaml en nuestro cluster. Esto lo conseguiremos posicionandos en la carpeta manifiestos en esta dirección minikube-static-web/deploymentYaml/manifiestos. Luego, se deben ejecutar los siguientes comandos en la terminal de forma secuencial: 
 kubectl apply -f namespace.yaml
 kubectl apply -f pvc/pv.yaml
 kubectl apply -f pvc/pvc.yaml
@@ -93,18 +94,20 @@ El Deployment configurado en nginx-deployment.yaml tiene un contenedor que funci
 
 Antes de acceder a la web de forma local, es necesario montar un volumen persistente que tendra almacenados los archivos de nuestra página web estática. Esto lo conseguimos ejecutando el siguiente comando 
 minikube mount <ruta a la carpeta con el contenido estático>:/mnt/data/web-content
+NOTA: la ruta con el contenido debe ser completa como /home/facundou/minikube-static-web/static-website
 
 Este comando monta la carpeta de tu máquina local (en la ruta especificada) dentro del nodo de Minikube, en la ruta /mnt/data/web-content. Esto permite que los archivos estáticos de la página web estén disponibles para ser utilizados dentro del clúster de Kubernetes. Es importante mantener esta terminal abierta mientras el comando se esté ejecutando, ya que si cierras la terminal, se detendrá el montaje, y Kubernetes ya no podrá acceder a los archivos estáticos.
 Gracias a ese montaje, el volumen persistente podrá obtener los datos de la página web estática y el contenedor nginx los va poder mostrar gracias a que esta asociado con ese pv. 
+Mientras ese comando se este ejecutando, los cambios que hagamos sobre el contenido estático tambien se van a pasar el cluster. Si el comando para de funcionar, la web no podrá mostrar el contenido. 
 
 Importante:
 Antes de acceder a la página web, es recomendable reiniciar el deployment para asegurarse de que el contenedor NGINX cargue correctamente los archivos estáticos desde el volumen persistente.
 Esto se debe a que el contenido montado con minikube mount puede no estar disponible inmediatamente cuando el contenedor se inicia por primera vez.
 Para reiniciar el deployment, ejecuta el siguiente comando:
-kubectl rollout restart deployment nginx-deployment -n web-site
+kubectl rollout restart deployment nginx -n web-site
 
 Una vez que aplicamos todos los manifiestos y montamos la carpeta con el contenido estático en el volumen persistente, ya podemos acceder al servido nginx a través del service que se encuentra en el cluster. 
 Para ello debemos ejecutar el siguiente comando para acceder al servidor mediante el service: 
-minikube service nginx -n web-site --url
+minikube service nginx-service -n web-site --url
 
 Este comando nos va a retornar una url local a la que podremos acceder. Una vez ingresemos a la url podremos ver la página web. 
