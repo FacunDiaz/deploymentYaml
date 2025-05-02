@@ -32,8 +32,8 @@ Luego, para posicionarnos dentro de la carpeta vamos a ejecutar:
 cd minikube-static-web 
 
 Una vez dentro de la carpeta vamos a hacer un git clone a los dos repositorios donde estan los manifiestos y el contenido estático. Para ello vamos a ejecutar los siguientes comandos dentro la carpeta minikube-static-web:
-https://github.com/<nombre_usuario>/deploymentYaml.git
-https://github.com/<nombre_usuario>/static-website.git
+git clone https://github.com/FacunDiaz/deploymentYaml.git
+git clone https://github.com/FacunDiaz/static-website.git
 Nota: Asegurate de haber configurado correctamente tu conexión SSH con GitHub para poder clonar ambos repositorios. Deberás completar el comando git clone con el nombre de usuario que este asociado con tu cuenta. 
 
 El directorio debería tener la siguiente estructura: 
