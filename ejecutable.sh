@@ -33,18 +33,21 @@ function verificar_herramientas(){
 verificar_herramientas 
 
 #Verificar que no haya otra carpeta con el mismo nombre 
-cd $HOME || exit 1  
-if [ ! -d minik-static-web ]; then
-	mkdir minik-static-web
-else 
-	echo "el directorio minik-static-web ya existe, no se puede seguir con el despliegue"
-	exit 1
+cd "$HOME" || exit 1  
+
+#Verificamos de que el directorio no exista
+if [ -d minik-static-web ]; then
+    echo "El directorio minik-static-web ya existe. Limpiando el contenido..."
+    rm -rf minik-static-web/*   # Borramos el contenido del directorio
+else
+    mkdir minik-static-web      # Si no existe, lo creamos
 fi
+
 cd minik-static-web
 
 #Clonamos los repos dentro de la carpeta
-git clone $REPO_MANIFIESTOS || {echo "Fallo al clonar el repositorio de manifiestos";exit 1 }
-git clone $REPO_STATIC || {echo "Fallo al clonar el repositorio del contenido estático";exit 1 }
+git clone "$REPO_MANIFIESTOS" || {echo "Fallo al clonar el repositorio de manifiestos";exit 1 }
+git clone "$REPO_STATIC" || {echo "Fallo al clonar el repositorio del contenido estático";exit 1 }
 
 #Crear perfil de minikube con el cluster
 minikube start --profile=$MINIKUBE_PROFILE||{echo "Error iniciando MINIKUBE";exit 1 }
